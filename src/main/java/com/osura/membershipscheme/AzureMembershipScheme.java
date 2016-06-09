@@ -13,6 +13,7 @@ import com.hazelcast.core.MemberAttributeEvent;
 import com.hazelcast.core.MembershipEvent;
 import com.hazelcast.core.MembershipListener;
 import com.microsoft.aad.adal4j.AuthenticationResult;
+//import com.nimbusds.jose.util.StringUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.ClusteringMessage;
 import org.apache.axis2.description.Parameter;
@@ -37,6 +37,7 @@ import org.json.JSONObject;
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastCarbonClusterImpl;
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastMembershipScheme;
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastUtil;
+import org.wso2.carbon.utils.xml.StringUtils;
 
 /**
  *
@@ -45,6 +46,7 @@ import org.wso2.carbon.core.clustering.hazelcast.HazelcastUtil;
 public class AzureMembershipScheme implements HazelcastMembershipScheme {
     
     private static final Log log = LogFactory.getLog(AzureMembershipScheme.class);
+    
 
     private final Map<String, Parameter> parameters;
     protected final NetworkConfig nwConfig;
@@ -64,13 +66,13 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
         this.nwConfig = config.getNetworkConfig();
     }
     
-//    public AzureMembershipScheme()
-//    {
-//        this.parameters = null;
-//        this.primaryHazelcastInstance = null;
-//        this.messageBuffer = null;
-//        this.nwConfig = null;
-//    }
+    public AzureMembershipScheme(Map<String, Parameter> parameters)
+    {
+        this.parameters = parameters;
+        this.primaryHazelcastInstance = null;
+        this.messageBuffer = null;
+        this.nwConfig = null;
+    }
     
     @Override
     public void setPrimaryHazelcastInstance(HazelcastInstance primaryHazelcastInstance) {
@@ -90,31 +92,68 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
     public void init() throws ClusteringFault
     {
         
-
-     
-    String AUTHORIZATION_ENDPOINT = Constants.AUTHORIZATION_ENDPOINT;
-    String ARM_ENDPOINT = Constants.ARM_ENDPOINT;
-    String username = Constants.username;
-    String credential = Constants.credential;
-    String tenantId = Constants.tenantId;
-    String clientId = Constants.clientId;
-    String subscriptionId = Constants.subscriptionId;
-    String resourceGroup=Constants.resourceGroup;
-    String networkSecurityGroup = Constants.NSG;
       
         try {
-            System.out.println("Initializing kubernetes membership scheme...");
+            System.out.println("Initializing Azure membership scheme...");
             log.info("Initializing kubernetes membership scheme...");
-
             nwConfig.getJoin().getMulticastConfig().setEnabled(false);
             nwConfig.getJoin().getAwsConfig().setEnabled(false);
             TcpIpConfig tcpIpConfig = nwConfig.getJoin().getTcpIpConfig();
             tcpIpConfig.setEnabled(true);
-         //   System.out.println("1");
             
+            String AUTHORIZATION_ENDPOINT = System.getenv(Constants.AUTHORIZATION_ENDPOINT);
+            String ARM_ENDPOINT = System.getenv(Constants.ARM_ENDPOINT);
+            String username = null; //  System.getenv(Constants.username);
+            String credential = System.getenv(Constants.credential);
+            String tenantId = System.getenv(Constants.tenantId);
+            String clientId = System.getenv(Constants.clientId);
+            String subscriptionId = System.getenv(Constants.subscriptionId);
+            String resourceGroup=System.getenv(Constants.resourceGroup);
+            String networkSecurityGroup = System.getenv(Constants.NSG);
+            
+            
+            if(StringUtils.isEmpty(AUTHORIZATION_ENDPOINT)) {
+            
+                AUTHORIZATION_ENDPOINT = getParameterValue(Constants.AUTHORIZATION_ENDPOINT,"https://login.microsoftonline.com/");
+            }
+            
+            if(StringUtils.isEmpty(ARM_ENDPOINT)) {
+                ARM_ENDPOINT = getParameterValue(Constants.ARM_ENDPOINT,"//https://management.azure.com/");
+            }
+            
+          
+//            if(StringUtils.isEmpty(username)) {
+//                username = null;
+//            }
+            
+            if(StringUtils.isEmpty(tenantId)) {
+                tenantId = getParameterValue(Constants.tenantId, "");
+            }
+            
+            if(StringUtils.isEmpty(clientId)) {
+                clientId = getParameterValue(Constants.clientId, "");
+            }
+            
+            if(StringUtils.isEmpty(credential)) {
+                credential = getParameterValue(Constants.credential, "");
+            }
+            
+            if(StringUtils.isEmpty(subscriptionId)) {
+                subscriptionId = getParameterValue(Constants.subscriptionId, "");
+            }
+            
+            if(StringUtils.isEmpty(resourceGroup)) {
+                resourceGroup = getParameterValue(Constants.resourceGroup, "");
+            }
+            
+            if(StringUtils.isEmpty(networkSecurityGroup)) {
+                networkSecurityGroup = getParameterValue(Constants.NSG, "");
+            }
             
             Authentication auth= new Authentication();
-            AuthenticationResult authToken= auth.getAuthToken();
+            AuthenticationResult authToken= auth.getAuthToken(AUTHORIZATION_ENDPOINT,ARM_ENDPOINT,username,credential,tenantId,clientId);
+            
+            
             System.out.println(String.format("Azure clustering configuration: [autherization-endpont] %s [arm-endpont] %s [tenant-id] %s [client-id] %s",
                     AUTHORIZATION_ENDPOINT, ARM_ENDPOINT, tenantId, clientId));
             log.info(String.format("Azure clustering configuration: [autherization-endpont] %s [arm-endpont] %s [tenant-id] %s [client-idl-verification] %s",
@@ -124,7 +163,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
            List IPAdresses = new ArrayList(findVMIPaddresses(authToken, ARM_ENDPOINT, subscriptionId,resourceGroup ,networkSecurityGroup));
                 for(int i=0; i<IPAdresses.size();i++) {
                     tcpIpConfig.addMember(IPAdresses.get(i).toString());
-                    log.info("Member added to cluster configuration: [container-ip] " + IPAdresses.get(i).toString());
+                    log.info("Member added to cluster configuration: [VM-ip] " + IPAdresses.get(i).toString());
                 }
         for(int i=0; i<IPAdresses.size();i++) {
             System.out.println(IPAdresses.get(i).toString());
@@ -135,7 +174,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
         {
             System.out.println(ex.getMessage());
             log.error(ex);
-            throw new ClusteringFault("Kubernetes membership initialization failed", ex);
+            throw new ClusteringFault("Azure membership initialization failed", ex);
             
         }
         
@@ -200,8 +239,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
                 firstIPConfig=IPConfigArray.getJSONObject(0);
                 propertiesIPConfig=firstIPConfig.getJSONObject("properties");
                 IPAddresses.add(propertiesIPConfig.getString("privateIPAddress"));
-                //privateIPAddress[i]=propertiesIPConfig.getString("privateIPAddress");
-               // System.out.println(IPAddresses.get(i));
+               
                 
             }
         return IPAddresses;
@@ -245,10 +283,33 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
 
      public void joinGroup() throws ClusteringFault 
      {
-        primaryHazelcastInstance.getCluster().addMembershipListener(new KubernetesMembershipSchemeListener());
+        primaryHazelcastInstance.getCluster().addMembershipListener(new AzureMembershipSchemeListener());
+    }
+     
+    private Parameter getParameter(String name) {
+        System.out.println(parameters.get(name));
+        return parameters.get(name);
     }
     
-     private class KubernetesMembershipSchemeListener implements MembershipListener {
+   protected String getParameterValue(String parameterName) throws ClusteringFault 
+   {
+       System.out.println("");
+        return getParameterValue(parameterName, null);
+    }
+
+    protected String getParameterValue(String parameterName, String defaultValue) throws ClusteringFault {
+        Parameter AzureServicesParam = getParameter(parameterName);
+        if (AzureServicesParam == null) {
+            if (defaultValue == null) {
+                throw new ClusteringFault(parameterName + " parameter not found");
+            } else {
+                return defaultValue;
+            }
+        }
+        return  AzureServicesParam.getValue().toString();
+    }
+    
+     private class AzureMembershipSchemeListener implements MembershipListener {
 
         @Override
         public void memberAdded(MembershipEvent membershipEvent) {
