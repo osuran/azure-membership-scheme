@@ -22,8 +22,8 @@ public class App
         param.put("resourceGroup",new Parameter("resourceGroup","ASCluster"));
         param.put("NSG",new Parameter("NSG","ASNSG"));
         
-        AzureMembershipScheme az=new AzureMembershipScheme(param);
-        az.init();
+//        AzureMembershipScheme az=new AzureMembershipScheme(param);
+//        az.init();
     }
         
 }

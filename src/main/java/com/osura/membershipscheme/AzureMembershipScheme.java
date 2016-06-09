@@ -66,13 +66,13 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
         this.nwConfig = config.getNetworkConfig();
     }
     
-    public AzureMembershipScheme(Map<String, Parameter> parameters)
-    {
-        this.parameters = parameters;
-        this.primaryHazelcastInstance = null;
-        this.messageBuffer = null;
-        this.nwConfig = null;
-    }
+//    public AzureMembershipScheme(Map<String, Parameter> parameters)
+//    {
+//        this.parameters = parameters;
+//        this.primaryHazelcastInstance = null;
+//        this.messageBuffer = null;
+//        this.nwConfig = null;
+//    }
     
     @Override
     public void setPrimaryHazelcastInstance(HazelcastInstance primaryHazelcastInstance) {
