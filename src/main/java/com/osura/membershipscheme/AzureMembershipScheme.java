@@ -94,8 +94,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
         
       
         try {
-            System.out.println("Initializing Azure membership scheme...");
-            log.info("Initializing kubernetes membership scheme...");
+            log.info("Initializing Azure membership scheme...");
             nwConfig.getJoin().getMulticastConfig().setEnabled(false);
             nwConfig.getJoin().getAwsConfig().setEnabled(false);
             TcpIpConfig tcpIpConfig = nwConfig.getJoin().getTcpIpConfig();
@@ -152,11 +151,8 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             
             Authentication auth= new Authentication();
             AuthenticationResult authToken= auth.getAuthToken(AUTHORIZATION_ENDPOINT,ARM_ENDPOINT,username,credential,tenantId,clientId);
-            
-            
-            System.out.println(String.format("Azure clustering configuration: [autherization-endpont] %s [arm-endpont] %s [tenant-id] %s [client-id] %s",
-                    AUTHORIZATION_ENDPOINT, ARM_ENDPOINT, tenantId, clientId));
-            log.info(String.format("Azure clustering configuration: [autherization-endpont] %s [arm-endpont] %s [tenant-id] %s [client-idl-verification] %s",
+
+            log.info(String.format("Azure clustering configuration: [autherization-endpont] %s [arm-endpont] %s [tenant-id] %s [client-id] %s",
                     AUTHORIZATION_ENDPOINT, ARM_ENDPOINT, tenantId, clientId));
 
             
@@ -165,14 +161,14 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
                     tcpIpConfig.addMember(IPAdresses.get(i).toString());
                     log.info("Member added to cluster configuration: [VM-ip] " + IPAdresses.get(i).toString());
                 }
-        for(int i=0; i<IPAdresses.size();i++) {
-            System.out.println(IPAdresses.get(i).toString());
-        }
+//        for(int i=0; i<IPAdresses.size();i++) {
+//            System.out.println(IPAdresses.get(i).toString());
+//        }
 }
         
         catch(Exception ex)
         {
-            System.out.println(ex.getMessage());
+           // System.out.println(ex.getMessage());
             log.error(ex);
             throw new ClusteringFault("Azure membership initialization failed", ex);
             
@@ -203,7 +199,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
         
                 String[] NICname= new String[len]; //NIC names 
 
-            System.out.println("Printing the names of NICs");
+     //       System.out.println("Printing the names of NICs");
             
             StringTokenizer[] st = new StringTokenizer[len];
             
@@ -214,7 +210,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
                 NICname[i]=st[i].nextToken();
                 }
                 NICname[i]=NICname[i].substring(0,NICname[i].length()-2);
-            System.out.println(NICname[i]);
+         //   System.out.println(NICname[i]);
             }
         
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -227,7 +223,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             JSONObject propertiesIPConfig= null;
             
            // String[] privateIPAddress=new String[len];
-            System.out.println("Printing the IP addresses of NICs");
+         //   System.out.println("Printing the IP addresses of NICs");
             for(int i=0; i<len; i++)
             {
                 url = String.format("%ssubscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/networkInterfaces/%s?api-version=2016-03-30",ARM_ENDPOINT,subscriptionID,resourceGroup,NICname[i]);
@@ -274,7 +270,8 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             } 
         catch (Exception ex) {
           //  System.out.println("osura1");
-            System.out.println(ex.toString());
+//            System.out.println(ex.toString());
+            log.error(ex);
             System.exit(1);
             }
         return body;
@@ -287,13 +284,11 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
     }
      
     private Parameter getParameter(String name) {
-        System.out.println(parameters.get(name));
         return parameters.get(name);
     }
     
    protected String getParameterValue(String parameterName) throws ClusteringFault 
    {
-       System.out.println("");
         return getParameterValue(parameterName, null);
     }
 
