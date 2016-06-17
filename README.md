@@ -36,5 +36,3 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  commons-logging-1.2.jar  
  java-json-0.13.0.jar  
  junit-3.8.1.jar_
- 
-3. 
