@@ -13,7 +13,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
 2. Copy following JAR files to the repository/components/lib directory of the Carbon server:
 
  These JAR files are packaged with the ZIP distribution of the Kubernetes Membership Scheme, inside the lib folder.
- 
+
  _accessors-smart-1.1.jar  
  bcprov-jdk15on-1.51.jar  
  gson-2.2.4.jar        
@@ -36,3 +36,46 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  commons-logging-1.2.jar  
  java-json-0.13.0.jar  
  junit-3.8.1.jar_
+ 
+3. Update axis2.xml with the following configuration:
+ 
+  ```xml
+  <clustering class="org.wso2.carbon.core.clustering.hazelcast.HazelcastClusteringAgent" enable="true">
+  <parameter name="membershipSchemeClassName">com.osura.membershipscheme.AzureMembershipScheme</parameter>
+  <parameter name="membershipScheme">Azure</parameter>
+ 
+  <parameter name="ARM_ENDPOINT">https://management.azure.com/</parameter>
+  <parameter name="AURORIZATION_ENDPOINT">https://login.microsoftonline.com/</parameter>
+  
+  </clustering> 
+  ```
+  
+  #### Clustering Parameters
+  
+ 1. subscriptionId - Azure Subscription ID
+ 2. tenantId - Tenant ID of the application
+ 3. clientId - Client ID of the application
+ 4. credential - Client key
+ 5. resourceGroup - Name of the resource group where the cluster is deployed
+ 6. NSG - Netwrok security group where relavent VMs are added to.
+
+  #### Example axis2.xml
+
+```xml
+<clustering class="org.wso2.carbon.core.clustering.hazelcast.HazelcastClusteringAgent" enable="true">
+  <parameter name="membershipSchemeClassName">com.osura.membershipscheme.AzureMembershipScheme</parameter>
+  <parameter name="membershipScheme">Azure</parameter>
+ 
+  <parameter name="credential">uduq558Ble9TlucvGECEFDvRqGv6q0WsFvFWYWOTaRw=</parameter>
+  <parameter name="tenantId">7a94c74f-5ab1-46c2-a98c-df7df7c5f41w</parameter>
+  <parameter name="clientId">ce86678c-8520-431c-9c9f-0bdf733e4131</parameter>
+  <parameter name="subscriptionId">0820043e-501c-43ff-ab1d-a96258a301dw</parameter>
+  <parameter name="resourceGroup">ASCluster</parameter>
+  <parameter name="NSG">ASNSG</parameter>
+  <parameter name="ARM_ENDPOINT">https://management.azure.com/</parameter>
+  <parameter name="AURORIZATION_ENDPOINT">https://login.microsoftonline.com/</parameter>
+  
+</clustering>
+```
+
+  
