@@ -262,11 +262,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             }
             instream.close();
            body=sb.toString();
-           
-//            BufferedWriter bwr = new BufferedWriter(new FileWriter(new File("E:/demo.txt")));
-//            bwr.write(sb.toString());
-//            bwr.flush();
-//            bwr.close();
+
             } 
         catch (Exception ex) {
           //  System.out.println("osura1");
