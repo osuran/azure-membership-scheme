@@ -12,7 +12,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
 
 2. Copy following JAR files to the repository/components/lib directory of the Carbon server:
 
- These JAR files are packaged with the ZIP distribution of the Kubernetes Membership Scheme, inside the lib folder.
+ These JAR files can be found [here](https://drive.google.com/open?id=0B19RbqSqO2PASnhXN1h0MG1VVHc) 
 
  _accessors-smart-1.1.jar  
  bcprov-jdk15on-1.51.jar  
