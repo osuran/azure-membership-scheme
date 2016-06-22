@@ -44,7 +44,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  
   ```xml
   <clustering class="org.wso2.carbon.core.clustering.hazelcast.HazelcastClusteringAgent" enable="true">
-  <parameter name="membershipSchemeClassName">com.osura.membershipscheme.AzureMembershipScheme</parameter>
+  <parameter name="membershipSchemeClassName">com.osura.membershipscheme.azure.AzureMembershipScheme</parameter>
   <parameter name="membershipScheme">Azure</parameter>
  
   <parameter name="ARM_ENDPOINT">https://management.azure.com/</parameter>
@@ -66,7 +66,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
 
 ```xml
 <clustering class="org.wso2.carbon.core.clustering.hazelcast.HazelcastClusteringAgent" enable="true">
-  <parameter name="membershipSchemeClassName">com.osura.membershipscheme.AzureMembershipScheme</parameter>
+  <parameter name="membershipSchemeClassName">com.osura.membershipscheme.azure.AzureMembershipScheme</parameter>
   <parameter name="membershipScheme">Azure</parameter>
  
   <parameter name="credential">uduq558Ble9TlucvGECEFDvRqGv6q0WsFvFWYWOTaRw=</parameter>
