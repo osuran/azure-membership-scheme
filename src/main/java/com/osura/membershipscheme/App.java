@@ -1,5 +1,6 @@
 package com.osura.membershipscheme;
 
+import com.osura.membershipscheme.azure.AzureMembershipScheme;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.axis2.description.Parameter;
