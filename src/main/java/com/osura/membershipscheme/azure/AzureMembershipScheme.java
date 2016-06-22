@@ -122,28 +122,50 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
 
             if (StringUtils.isEmpty(tenantId)) {
                 tenantId = getParameterValue(Constants.tenantId, "");
+                if(StringUtils.isEmpty(tenantId))
+                {
+                    throw new ClusteringFault("Azure tenantId parameter not found");
+                }
             }
-
-            System.out.print(tenantId);
 
             if (StringUtils.isEmpty(clientId)) {
                 clientId = getParameterValue(Constants.clientId, "");
+                if(StringUtils.isEmpty(clientId))
+                {
+                    throw new ClusteringFault("Azure clientId parameter not found");
+                }
             }
 
             if (StringUtils.isEmpty(credential)) {
                 credential = getParameterValue(Constants.credential, "");
+                if(StringUtils.isEmpty(credential))
+                {
+                    throw new ClusteringFault("Azure credential parameter not found");
+                }
             }
 
             if (StringUtils.isEmpty(subscriptionId)) {
                 subscriptionId = getParameterValue(Constants.subscriptionId, "");
+                if(StringUtils.isEmpty(subscriptionId))
+                {
+                    throw new ClusteringFault("Azure subscriptionId parameter not found");
+                }
             }
 
             if (StringUtils.isEmpty(resourceGroup)) {
                 resourceGroup = getParameterValue(Constants.resourceGroup, "");
+                if(StringUtils.isEmpty(resourceGroup))
+                {
+                    throw new ClusteringFault("Azure resourceGroup parameter not found");
+                }
             }
 
             if (StringUtils.isEmpty(networkSecurityGroup)) {
                 networkSecurityGroup = getParameterValue(Constants.NSG, "");
+                if(StringUtils.isEmpty(networkSecurityGroup))
+                {
+                    throw new ClusteringFault("Azure NSG parameter not found");
+                }
             }
 
             Authentication auth = new Authentication();
@@ -159,6 +181,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
                 tcpIpConfig.addMember(IPAdresses.get(i).toString());
                 log.info("Member added to cluster configuration: [VM-ip] " + IPAdresses.get(i).toString());
             }
+            log.info("Azure membership scheme initialized successfully");
 
         } catch (Exception ex) {
             log.error(ex);
@@ -213,6 +236,11 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
 
             throw new AzureMembershipSchemeException("Could not connect to Azure API", ex);
         }
+        
+//        catch(NullPointerException ex)
+//        {
+//            
+//        }
         return instream;
 
     }
