@@ -12,7 +12,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
 
 2. Copy following JAR files to the repository/components/lib directory of the Carbon server:
 
- These JAR files can be found [here](https://drive.google.com/open?id=0B19RbqSqO2PASnhXN1h0MG1VVHc) 
+ These JAR files can be found [here](https://drive.google.com/open?id=0B19RbqSqO2PASElKb0tCaUtHNFU) 
 
  _accessors-smart-1.1.jar  
  bcprov-jdk15on-1.51.jar  
@@ -35,7 +35,10 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  asm-5.0.3.jar            
  commons-logging-1.2.jar  
  java-json-0.13.0.jar  
- junit-3.8.1.jar_
+ junit-3.8.1.jar
+ jackson-annotations-2.7.4.jar  
+ jackson-core-2.7.4.jar          
+ jackson-databind-2.7.4.jar_
  
 3. Update axis2.xml with the following configuration:
  
