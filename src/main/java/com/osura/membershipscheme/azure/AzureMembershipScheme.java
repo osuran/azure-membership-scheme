@@ -17,6 +17,7 @@ import com.microsoft.aad.adal4j.AuthenticationResult;
 import com.osura.membershipscheme.azure.authentication.Authentication;
 import com.osura.membershipscheme.azure.domain.NetworkInterface;
 import com.osura.membershipscheme.azure.domain.NetworkSecurityGroup;
+import com.osura.membershipscheme.azure.exceptions.AzureMembershipSchemeException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -167,7 +168,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
 
     }
 
-    protected List<String> findVMIPaddresses(AuthenticationResult result, String ARM_ENDPOINT, String subscriptionID, String resourceGroup, String networkSecurityGroup) {
+    protected List<String> findVMIPaddresses(AuthenticationResult result, String ARM_ENDPOINT, String subscriptionID, String resourceGroup, String networkSecurityGroup) throws AzureMembershipSchemeException {
         List IPAddresses = new ArrayList();
         //list NICs grouped in the specified network security group
         String url = String.format("%ssubscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/networkSecurityGroups/%s?api-version=2016-03-30", ARM_ENDPOINT, subscriptionID, resourceGroup, networkSecurityGroup);
@@ -188,13 +189,13 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             }
 
         } catch (IOException ex) {
-            System.out.println("1" + ex.getMessage());
+            throw new AzureMembershipSchemeException("Could not find VM IP addresses", ex);
         }
 
         return IPAddresses;
     }
 
-    public InputStream getAPIresponse(String url, AuthenticationResult result) {
+    public InputStream getAPIresponse(String url, AuthenticationResult result) throws AzureMembershipSchemeException {
 
         InputStream instream = null;
         try {
@@ -210,8 +211,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
 
         } catch (Exception ex) {
 
-            log.error(ex);
-            System.exit(1);
+            throw new AzureMembershipSchemeException("Could not connect to Azure API", ex);
         }
         return instream;
 
