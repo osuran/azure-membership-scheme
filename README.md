@@ -35,7 +35,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  asm-5.0.3.jar            
  commons-logging-1.2.jar  
  java-json-0.13.0.jar  
- junit-3.8.1.jar
+ junit-3.8.1.jar 
  jackson-annotations-2.7.4.jar  
  jackson-core-2.7.4.jar          
  jackson-databind-2.7.4.jar_
