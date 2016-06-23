@@ -1,4 +1,4 @@
-package com.osura.membershipscheme;
+package org.wso2.carbon.clustering.azure;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
