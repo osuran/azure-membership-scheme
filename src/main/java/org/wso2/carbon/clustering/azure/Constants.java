@@ -17,13 +17,16 @@ package org.wso2.carbon.clustering.azure;
 
 /**
  *
- * @author Osura
+ * Constants for Azure membership scheme
  */
 public class Constants {
 
-    public final static String AUTHORIZATION_ENDPOINT = "AURORIZATION_ENDPOINT"; 
-    public final static String ARM_ENDPOINT = "ARM_ENDPOINT"; 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public final static String AUTHORIZATION_ENDPOINT = "https://login.microsoftonline.com/"; 
+    public final static String ARM_ENDPOINT = "https://management.azure.com/"; 
+    public final static String REST_API_AVAILABLE_NICs = "%ssubscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/networkSecurityGroups"
+            + "/%s?api-version=2016-03-30";
+    public final static String REST_API_NIC_INFO = "%ssubscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/networkInterfaces"
+            + "/%s?api-version=2016-03-30";
     public final static String username = "azure_username";
     public final static String credential = "credential";
     public final static String tenantId = "tenantId";
@@ -31,6 +34,5 @@ public class Constants {
     public final static String subscriptionId = "subscriptionId";
     public final static String resourceGroup = "resourceGroup";
     public final static String NSG = "NSG";
-    public final static String validationAuthorityValue = "validationAuthority";
-   
+    public final static String validationAuthorityValue = "validationAuthority"; 
 }

@@ -91,8 +91,6 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
 
     @Override
     public void init() throws ClusteringFault {
-
-
         try {
             log.info("Initializing Azure membership scheme...");
             nwConfig.getJoin().getMulticastConfig().setEnabled(false);
@@ -100,8 +98,8 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             TcpIpConfig tcpIpConfig = nwConfig.getJoin().getTcpIpConfig();
             tcpIpConfig.setEnabled(true);
 
-            String AUTHORIZATION_ENDPOINT = System.getenv(Constants.AUTHORIZATION_ENDPOINT);
-            String ARM_ENDPOINT = System.getenv(Constants.ARM_ENDPOINT);
+            String AUTHORIZATION_ENDPOINT = Constants.AUTHORIZATION_ENDPOINT;
+            String ARM_ENDPOINT = Constants.ARM_ENDPOINT;
             String username = System.getenv(Constants.username);
             String credential = System.getenv(Constants.credential);
             String tenantId = System.getenv(Constants.tenantId);
@@ -111,19 +109,8 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             String networkSecurityGroup = System.getenv(Constants.NSG);
             String validationAuthorityValue = System.getenv(Constants.validationAuthorityValue);
 
-
-            if (StringUtils.isEmpty(AUTHORIZATION_ENDPOINT)) {
-
-                AUTHORIZATION_ENDPOINT = getParameterValue(Constants.AUTHORIZATION_ENDPOINT, "https://login.microsoftonline.com/");
-            }
-
-            if (StringUtils.isEmpty(ARM_ENDPOINT)) {
-                ARM_ENDPOINT = getParameterValue(Constants.ARM_ENDPOINT, "//https://management.azure.com/");
-            }
-
             if (StringUtils.isEmpty(validationAuthorityValue)) {
                 validationAuthorityValue = getParameterValue(Constants.validationAuthorityValue, "false");
-
             }
 
             validationAuthority = Boolean.parseBoolean(validationAuthorityValue);
@@ -138,52 +125,51 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             if (StringUtils.isEmpty(tenantId)) {
                 tenantId = getParameterValue(Constants.tenantId, "");
                 if (StringUtils.isEmpty(tenantId)) {
-                    throw new ClusteringFault("Azure tenantId parameter not found");
+                    throw new ClusteringFault(String.format("Azure %s parameter not found", tenantId));
                 }
             }
 
             if (StringUtils.isEmpty(clientId)) {
                 clientId = getParameterValue(Constants.clientId, "");
                 if (StringUtils.isEmpty(clientId)) {
-                    throw new ClusteringFault("Azure clientId parameter not found");
+                    throw new ClusteringFault(String.format("Azure %s parameter not found", clientId));
                 }
             }
 
             if (StringUtils.isEmpty(credential)) {
                 credential = getParameterValue(Constants.credential, "");
                 if (StringUtils.isEmpty(credential)) {
-                    throw new ClusteringFault("Azure credential parameter not found");
+                    throw new ClusteringFault(String.format("Azure %s parameter not found", credential));
                 }
             }
 
             if (StringUtils.isEmpty(subscriptionId)) {
                 subscriptionId = getParameterValue(Constants.subscriptionId, "");
                 if (StringUtils.isEmpty(subscriptionId)) {
-                    throw new ClusteringFault("Azure subscriptionId parameter not found");
+                    throw new ClusteringFault(String.format("Azure %s parameter not found", subscriptionId));
                 }
             }
 
             if (StringUtils.isEmpty(resourceGroup)) {
                 resourceGroup = getParameterValue(Constants.resourceGroup, "");
                 if (StringUtils.isEmpty(resourceGroup)) {
-                    throw new ClusteringFault("Azure resourceGroup parameter not found");
+                    throw new ClusteringFault(String.format("Azure %s parameter not found", resourceGroup));
                 }
             }
 
             if (StringUtils.isEmpty(networkSecurityGroup)) {
                 networkSecurityGroup = getParameterValue(Constants.NSG, "");
                 if (StringUtils.isEmpty(networkSecurityGroup)) {
-                    throw new ClusteringFault("Azure NSG parameter not found");
+                    throw new ClusteringFault(String.format("Azure %s parameter not found", networkSecurityGroup));
                 }
             }
 
             Authentication auth = new Authentication();
-            AuthenticationResult authToken = auth.getAuthToken(AUTHORIZATION_ENDPOINT, ARM_ENDPOINT, username, credential, tenantId, clientId, validationAuthority);
-
+            AuthenticationResult authToken = auth.getAuthToken(AUTHORIZATION_ENDPOINT, ARM_ENDPOINT,
+                    username, credential, tenantId, clientId, validationAuthority);
 
             log.info(String.format("Azure clustering configuration: [autherization-endpont] %s [arm-endpont] %s [tenant-id] %s [client-id] %s",
                     AUTHORIZATION_ENDPOINT, ARM_ENDPOINT, tenantId, clientId));
-
 
             List IPAdresses = new ArrayList(findVMIPaddresses(authToken, ARM_ENDPOINT, subscriptionId, resourceGroup, networkSecurityGroup));
             for (int i = 0; i < IPAdresses.size(); i++) {
@@ -195,35 +181,31 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
         } catch (Exception ex) {
             log.error(ex);
             throw new ClusteringFault("Azure membership initialization failed", ex);
-
         }
-
     }
 
-    protected List<String> findVMIPaddresses(AuthenticationResult result, String ARM_ENDPOINT, String subscriptionID, String resourceGroup, String networkSecurityGroup) throws AzureMembershipSchemeException {
+    protected List<String> findVMIPaddresses(AuthenticationResult result,
+            String ARM_ENDPOINT, String subscriptionID, String resourceGroup,
+            String networkSecurityGroup) throws AzureMembershipSchemeException {
+
         List IPAddresses = new ArrayList();
         //list NICs grouped in the specified network security group
-        String url = String.format("%ssubscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/networkSecurityGroups/%s?api-version=2016-03-30", ARM_ENDPOINT, subscriptionID, resourceGroup, networkSecurityGroup);
-        InputStream instream;
-        instream = getAPIresponse(url, result);
-
+        String url = String.format(Constants.REST_API_AVAILABLE_NICs, ARM_ENDPOINT, subscriptionID, resourceGroup, networkSecurityGroup);
+        InputStream instream = getAPIresponse(url, result);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             NetworkSecurityGroup nsg = objectMapper.readValue(instream, NetworkSecurityGroup.class);
             List ninames = nsg.getProperties().getNetworkInterfaceNames();
 
             for (int i = 0; i < ninames.size(); i++) {
-
-                url = String.format("%ssubscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/networkInterfaces/%s?api-version=2016-03-30", ARM_ENDPOINT, subscriptionID, resourceGroup, ninames.get(i));
+                url = String.format(Constants.REST_API_NIC_INFO, ARM_ENDPOINT, subscriptionID, resourceGroup, ninames.get(i));
                 instream = getAPIresponse(url, result);
                 NetworkInterface ni = objectMapper.readValue(instream, NetworkInterface.class);
                 IPAddresses.add(ni.getProperties().getIPAddress());
             }
-
         } catch (IOException ex) {
             throw new AzureMembershipSchemeException("Could not find VM IP addresses", ex);
         }
-
         return IPAddresses;
     }
 
@@ -240,14 +222,10 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             HttpEntity entity = response.getEntity();
             instream = entity.getContent();
 
-
         } catch (Exception ex) {
-
             throw new AzureMembershipSchemeException("Could not connect to Azure API", ex);
         }
-
         return instream;
-
     }
 
     public void joinGroup() throws ClusteringFault {
