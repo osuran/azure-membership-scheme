@@ -62,7 +62,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
     private final List<ClusteringMessage> messageBuffer;
     private HazelcastInstance primaryHazelcastInstance;
     private HazelcastCarbonClusterImpl carbonCluster;
-    private boolean validationAuthority;
+    // private boolean validationAuthority;
 
     public AzureMembershipScheme(Map<String, Parameter> parameters,
             String primaryDomain,
@@ -98,88 +98,30 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             TcpIpConfig tcpIpConfig = nwConfig.getJoin().getTcpIpConfig();
             tcpIpConfig.setEnabled(true);
 
-            String AUTHORIZATION_ENDPOINT = Constants.AUTHORIZATION_ENDPOINT;
-            String ARM_ENDPOINT = Constants.ARM_ENDPOINT;
-            String username = System.getenv(Constants.username);
-            String credential = System.getenv(Constants.credential);
-            String tenantId = System.getenv(Constants.tenantId);
-            String clientId = System.getenv(Constants.clientId);
-            String subscriptionId = System.getenv(Constants.subscriptionId);
-            String resourceGroup = System.getenv(Constants.resourceGroup);
-            String networkSecurityGroup = System.getenv(Constants.NSG);
-            String validationAuthorityValue = System.getenv(Constants.validationAuthorityValue);
-
-            if (StringUtils.isEmpty(validationAuthorityValue)) {
-                validationAuthorityValue = getParameterValue(Constants.validationAuthorityValue, "false");
-            }
-
-            validationAuthority = Boolean.parseBoolean(validationAuthorityValue);
-
-            if (StringUtils.isEmpty(username)) {
-                username = getParameterValue(Constants.username, "username");
-                if (username.equals("username")) {
-                    username = null;
-                }
-            }
-
-            if (StringUtils.isEmpty(tenantId)) {
-                tenantId = getParameterValue(Constants.tenantId, "");
-                if (StringUtils.isEmpty(tenantId)) {
-                    throw new ClusteringFault(String.format("Azure %s parameter not found", tenantId));
-                }
-            }
-
-            if (StringUtils.isEmpty(clientId)) {
-                clientId = getParameterValue(Constants.clientId, "");
-                if (StringUtils.isEmpty(clientId)) {
-                    throw new ClusteringFault(String.format("Azure %s parameter not found", clientId));
-                }
-            }
-
-            if (StringUtils.isEmpty(credential)) {
-                credential = getParameterValue(Constants.credential, "");
-                if (StringUtils.isEmpty(credential)) {
-                    throw new ClusteringFault(String.format("Azure %s parameter not found", credential));
-                }
-            }
-
-            if (StringUtils.isEmpty(subscriptionId)) {
-                subscriptionId = getParameterValue(Constants.subscriptionId, "");
-                if (StringUtils.isEmpty(subscriptionId)) {
-                    throw new ClusteringFault(String.format("Azure %s parameter not found", subscriptionId));
-                }
-            }
-
-            if (StringUtils.isEmpty(resourceGroup)) {
-                resourceGroup = getParameterValue(Constants.resourceGroup, "");
-                if (StringUtils.isEmpty(resourceGroup)) {
-                    throw new ClusteringFault(String.format("Azure %s parameter not found", resourceGroup));
-                }
-            }
-
-            if (StringUtils.isEmpty(networkSecurityGroup)) {
-                networkSecurityGroup = getParameterValue(Constants.NSG, "");
-                if (StringUtils.isEmpty(networkSecurityGroup)) {
-                    throw new ClusteringFault(String.format("Azure %s parameter not found", networkSecurityGroup));
-                }
-            }
+            String username = getConstant(Constants.username, "", true);
+            String credential = getConstant(Constants.credential, "", false);
+            String tenantId = getConstant(Constants.tenantId, "", false);
+            String clientId = getConstant(Constants.clientId, "", false);
+            String subscriptionId = getConstant(Constants.subscriptionId, "", false);
+            String resourceGroup = getConstant(Constants.resourceGroup, "", false);
+            String networkSecurityGroup = getConstant(Constants.NSG, "", false);
+            boolean validationAuthority = Boolean.parseBoolean(getConstant(Constants.validationAuthorityValue, "false", true));
 
             Authentication auth = new Authentication();
-            AuthenticationResult authToken = auth.getAuthToken(AUTHORIZATION_ENDPOINT, ARM_ENDPOINT,
+            AuthenticationResult authToken = auth.getAuthToken(Constants.AUTHORIZATION_ENDPOINT, Constants.ARM_ENDPOINT,
                     username, credential, tenantId, clientId, validationAuthority);
 
-            log.info(String.format("Azure clustering configuration: [autherization-endpont] %s [arm-endpont] %s [tenant-id] %s [client-id] %s",
-                    AUTHORIZATION_ENDPOINT, ARM_ENDPOINT, tenantId, clientId));
+            log.info(String.format("Azure clustering configuration: [autherization-endpont] %s , [arm-endpont] %s , [tenant-id] %s , [client-id] %s",
+                    Constants.AUTHORIZATION_ENDPOINT, Constants.ARM_ENDPOINT, tenantId, clientId));
 
-            List IPAdresses = new ArrayList(findVMIPaddresses(authToken, ARM_ENDPOINT, subscriptionId, resourceGroup, networkSecurityGroup));
-            for (int i = 0; i < IPAdresses.size(); i++) {
-                tcpIpConfig.addMember(IPAdresses.get(i).toString());
-                log.info(String.format("Member added to cluster configuration: [VM-ip] %s", IPAdresses.get(i).toString()));
+            List IPAddresses = new ArrayList(findVMIPaddresses(authToken, Constants.ARM_ENDPOINT, subscriptionId, resourceGroup, networkSecurityGroup));
+            for (Object IPAddress : IPAddresses) {
+              //  tcpIpConfig.addMember(IPAddress.toString());
+                nwConfig.getJoin().getTcpIpConfig().addMember(IPAddress.toString());
+                log.info(String.format("Member added to cluster configuration: [IP Address] %s", IPAddress.toString()));
             }
             log.info("Azure membership scheme initialized successfully");
-
         } catch (Exception ex) {
-            log.error(ex);
             throw new ClusteringFault("Azure membership initialization failed", ex);
         }
     }
@@ -197,8 +139,8 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             NetworkSecurityGroup nsg = objectMapper.readValue(instream, NetworkSecurityGroup.class);
             List ninames = nsg.getProperties().getNetworkInterfaceNames();
 
-            for (int i = 0; i < ninames.size(); i++) {
-                url = String.format(Constants.REST_API_NIC_INFO, ARM_ENDPOINT, subscriptionID, resourceGroup, ninames.get(i));
+            for (Object niname : ninames) {
+                url = String.format(Constants.REST_API_NIC_INFO, ARM_ENDPOINT, subscriptionID, resourceGroup, niname);
                 instream = getAPIresponse(url, result);
                 NetworkInterface ni = objectMapper.readValue(instream, NetworkInterface.class);
                 IPAddresses.add(ni.getProperties().getIPAddress());
@@ -236,20 +178,23 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
         return parameters.get(name);
     }
 
-    protected String getParameterValue(String parameterName) throws ClusteringFault {
-        return getParameterValue(parameterName, null);
-    }
-
-    protected String getParameterValue(String parameterName, String defaultValue) throws ClusteringFault {
-        Parameter AzureServicesParam = getParameter(parameterName);
-        if (AzureServicesParam == null) {
-            if (defaultValue == null) {
-                throw new ClusteringFault(parameterName + " parameter not found");
+    protected String getConstant(String constant, String defaultValue, boolean isOptional) throws ClusteringFault {
+        String param = System.getenv(constant);
+        Parameter parameter;
+        if (StringUtils.isEmpty(param)) {
+            parameter = getParameter(constant);
+            if (parameter == null) {
+                param = defaultValue;
+                if (StringUtils.isEmpty(param) && !isOptional) {   //should leave defaultvalue blank if the value is mandatory
+                    throw new ClusteringFault(String.format("Azure %s parameter not found", constant));
+                } else {
+                    param = null;
+                }
             } else {
-                return defaultValue;
+                return parameter.getValue().toString();
             }
         }
-        return AzureServicesParam.getValue().toString();
+        return param;
     }
 
     private class AzureMembershipSchemeListener implements MembershipListener {
@@ -260,7 +205,7 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
 
             // Send all cluster messages
             carbonCluster.memberAdded(member);
-            log.info(String.format("Member joined [%s] :%s", member.getUuid(), member.getSocketAddress().toString()));
+            log.info(String.format("Member joined [%s] : %s", member.getUuid(), member.getSocketAddress().toString()));
             // Wait for sometime for the member to completely join before replaying messages
             try {
                 Thread.sleep(5000);
@@ -273,13 +218,13 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
         public void memberRemoved(MembershipEvent membershipEvent) {
             Member member = membershipEvent.getMember();
             carbonCluster.memberRemoved(member);
-            log.info(String.format("Member left [%s] :%s", member.getUuid(), member.getSocketAddress().toString()));
+            log.info(String.format("Member left [%s] : %s", member.getUuid(), member.getSocketAddress().toString()));
         }
 
         @Override
         public void memberAttributeChanged(MemberAttributeEvent memberAttributeEvent) {
             if (log.isDebugEnabled()) {
-                log.debug(String.format("Member attribute changed [ %s ] %s", memberAttributeEvent.getKey(), memberAttributeEvent.getValue()));
+                log.debug(String.format("Member attribute changed [%s] %s", memberAttributeEvent.getKey(), memberAttributeEvent.getValue()));
             }
         }
     }
