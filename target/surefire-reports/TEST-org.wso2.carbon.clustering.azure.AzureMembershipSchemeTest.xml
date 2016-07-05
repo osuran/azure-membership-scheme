@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.032" errors="0" skipped="0" tests="1" name="org.wso2.carbon.clustering.azure.AppTest">
+<testsuite failures="0" time="0.031" errors="8" skipped="0" tests="8" name="org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.7.0_79\jre\bin"/>
@@ -60,5 +60,60 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase time="0" classname="org.wso2.carbon.clustering.azure.AppTest" name="testApp"/>
+  <testcase time="0.016" classname="org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest" name="testSetPrimaryHazelcastInstance">
+    <error type="java.lang.NullPointerException">java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest.testSetPrimaryHazelcastInstance(AzureMembershipSchemeTest.java:42)
+</error>
+    <system-out>setPrimaryHazelcastInstance
+</system-out>
+  </testcase>
+  <testcase time="0" classname="org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest" name="testGetConstant">
+    <error type="java.lang.NullPointerException">java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest.testGetConstant(AzureMembershipSchemeTest.java:136)
+</error>
+    <system-out>getConstant
+</system-out>
+  </testcase>
+  <testcase time="0" classname="org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest" name="testGetAPIresponse">
+    <error type="java.lang.NullPointerException">java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest.testGetAPIresponse(AzureMembershipSchemeTest.java:109)
+</error>
+    <system-out>getAPIresponse
+</system-out>
+  </testcase>
+  <testcase time="0.015" classname="org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest" name="testFindVMIPaddresses">
+    <error type="java.lang.NullPointerException">java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest.testFindVMIPaddresses(AzureMembershipSchemeTest.java:94)
+</error>
+    <system-out>findVMIPaddresses
+</system-out>
+  </testcase>
+  <testcase time="0" classname="org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest" name="testSetLocalMember">
+    <error type="java.lang.NullPointerException">java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest.testSetLocalMember(AzureMembershipSchemeTest.java:54)
+</error>
+    <system-out>setLocalMember
+</system-out>
+  </testcase>
+  <testcase time="0" classname="org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest" name="testSetCarbonCluster">
+    <error type="java.lang.NullPointerException">java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest.testSetCarbonCluster(AzureMembershipSchemeTest.java:66)
+</error>
+    <system-out>setCarbonCluster
+</system-out>
+  </testcase>
+  <testcase time="0" classname="org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest" name="testJoinGroup">
+    <error type="java.lang.NullPointerException">java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest.testJoinGroup(AzureMembershipSchemeTest.java:121)
+</error>
+    <system-out>joinGroup
+</system-out>
+  </testcase>
+  <testcase time="0" classname="org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest" name="testInit">
+    <error type="java.lang.NullPointerException">java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeTest.testInit(AzureMembershipSchemeTest.java:77)
+</error>
+    <system-out>init
+</system-out>
+  </testcase>
 </testsuite>

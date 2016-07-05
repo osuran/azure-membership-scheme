@@ -116,7 +116,6 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
 
             List IPAddresses = new ArrayList(findVMIPaddresses(authToken, Constants.ARM_ENDPOINT, subscriptionId, resourceGroup, networkSecurityGroup));
             for (Object IPAddress : IPAddresses) {
-              //  tcpIpConfig.addMember(IPAddress.toString());
                 nwConfig.getJoin().getTcpIpConfig().addMember(IPAddress.toString());
                 log.info(String.format("Member added to cluster configuration: [IP Address] %s", IPAddress.toString()));
             }
