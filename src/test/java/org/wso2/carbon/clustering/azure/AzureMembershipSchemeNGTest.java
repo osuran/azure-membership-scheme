@@ -9,32 +9,43 @@ import com.hazelcast.core.Member;
 import com.microsoft.aad.adal4j.AuthenticationResult;
 import java.io.InputStream;
 import java.util.List;
-import junit.framework.TestCase;
+import static org.testng.Assert.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastCarbonClusterImpl;
 
 /**
  *
  * @author Osura
  */
-public class AzureMembershipSchemeTest extends TestCase {
+public class AzureMembershipSchemeNGTest {
     
-    public AzureMembershipSchemeTest(String testName) {
-        super(testName);
+    public AzureMembershipSchemeNGTest() {
     }
-    
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
     }
-    
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @BeforeMethod
+    public void setUpMethod() throws Exception {
+    }
+
+    @AfterMethod
+    public void tearDownMethod() throws Exception {
     }
 
     /**
      * Test of setPrimaryHazelcastInstance method, of class AzureMembershipScheme.
      */
+    @Test
     public void testSetPrimaryHazelcastInstance() {
         System.out.println("setPrimaryHazelcastInstance");
         HazelcastInstance primaryHazelcastInstance = null;
@@ -47,6 +58,7 @@ public class AzureMembershipSchemeTest extends TestCase {
     /**
      * Test of setLocalMember method, of class AzureMembershipScheme.
      */
+    @Test
     public void testSetLocalMember() {
         System.out.println("setLocalMember");
         Member localMember = null;
@@ -59,6 +71,7 @@ public class AzureMembershipSchemeTest extends TestCase {
     /**
      * Test of setCarbonCluster method, of class AzureMembershipScheme.
      */
+    @Test
     public void testSetCarbonCluster() {
         System.out.println("setCarbonCluster");
         HazelcastCarbonClusterImpl hazelcastCarbonCluster = null;
@@ -71,6 +84,7 @@ public class AzureMembershipSchemeTest extends TestCase {
     /**
      * Test of init method, of class AzureMembershipScheme.
      */
+    @Test
     public void testInit() throws Exception {
         System.out.println("init");
         AzureMembershipScheme instance = null;
@@ -82,6 +96,7 @@ public class AzureMembershipSchemeTest extends TestCase {
     /**
      * Test of findVMIPaddresses method, of class AzureMembershipScheme.
      */
+    @Test
     public void testFindVMIPaddresses() throws Exception {
         System.out.println("findVMIPaddresses");
         AuthenticationResult result_2 = null;
@@ -92,7 +107,7 @@ public class AzureMembershipSchemeTest extends TestCase {
         AzureMembershipScheme instance = null;
         List expResult = null;
         List result = instance.findVMIPaddresses(result_2, ARM_ENDPOINT, subscriptionID, resourceGroup, networkSecurityGroup);
-        assertEquals(expResult, result);
+        assertEquals(result, expResult);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -100,6 +115,7 @@ public class AzureMembershipSchemeTest extends TestCase {
     /**
      * Test of getAPIresponse method, of class AzureMembershipScheme.
      */
+    @Test
     public void testGetAPIresponse() throws Exception {
         System.out.println("getAPIresponse");
         String url = "";
@@ -107,7 +123,7 @@ public class AzureMembershipSchemeTest extends TestCase {
         AzureMembershipScheme instance = null;
         InputStream expResult = null;
         InputStream result = instance.getAPIresponse(url, result_2);
-        assertEquals(expResult, result);
+        assertEquals(result, expResult);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -115,6 +131,7 @@ public class AzureMembershipSchemeTest extends TestCase {
     /**
      * Test of joinGroup method, of class AzureMembershipScheme.
      */
+    @Test
     public void testJoinGroup() throws Exception {
         System.out.println("joinGroup");
         AzureMembershipScheme instance = null;
@@ -126,6 +143,7 @@ public class AzureMembershipSchemeTest extends TestCase {
     /**
      * Test of getConstant method, of class AzureMembershipScheme.
      */
+    @Test
     public void testGetConstant() throws Exception {
         System.out.println("getConstant");
         String constant = "";
@@ -134,7 +152,7 @@ public class AzureMembershipSchemeTest extends TestCase {
         AzureMembershipScheme instance = null;
         String expResult = "";
         String result = instance.getConstant(constant, defaultValue, isOptional);
-        assertEquals(expResult, result);
+        assertEquals(result, expResult);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

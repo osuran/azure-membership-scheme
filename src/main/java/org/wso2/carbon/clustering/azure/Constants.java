@@ -27,12 +27,12 @@ public class Constants {
             + "/%s?api-version=2016-03-30";
     public final static String REST_API_NIC_INFO = "%ssubscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/networkInterfaces"
             + "/%s?api-version=2016-03-30";
-    public final static String username = "azure_username";
-    public final static String credential = "credential";
-    public final static String tenantId = "tenantId";
-    public final static String clientId = "clientId";
-    public final static String subscriptionId = "subscriptionId";
-    public final static String resourceGroup = "resourceGroup";
-    public final static String NSG = "NSG";
+    public final static String azure_username = "azure_username";
+    public final static String azure_credential = "credential";
+    public final static String azure_tenantId = "tenantId";
+    public final static String azure_clientId = "clientId";
+    public final static String azure_subscriptionId = "subscriptionId";
+    public final static String azure_resourceGroup = "resourceGroup";
+    public final static String azure_networkSecurityGroup = "NSG";
     public final static String validationAuthorityValue = "validationAuthority"; 
 }

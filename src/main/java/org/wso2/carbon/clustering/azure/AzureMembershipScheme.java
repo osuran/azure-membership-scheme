@@ -98,13 +98,13 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             TcpIpConfig tcpIpConfig = nwConfig.getJoin().getTcpIpConfig();
             tcpIpConfig.setEnabled(true);
 
-            String username = getConstant(Constants.username, "", true);
-            String credential = getConstant(Constants.credential, "", false);
-            String tenantId = getConstant(Constants.tenantId, "", false);
-            String clientId = getConstant(Constants.clientId, "", false);
-            String subscriptionId = getConstant(Constants.subscriptionId, "", false);
-            String resourceGroup = getConstant(Constants.resourceGroup, "", false);
-            String networkSecurityGroup = getConstant(Constants.NSG, "", false);
+            String username = getConstant(Constants.azure_username, "", true);
+            String credential = getConstant(Constants.azure_credential, "", false);
+            String tenantId = getConstant(Constants.azure_tenantId, "", false);
+            String clientId = getConstant(Constants.azure_clientId, "", false);
+            String subscriptionId = getConstant(Constants.azure_subscriptionId, "", false);
+            String resourceGroup = getConstant(Constants.azure_resourceGroup, "", false);
+            String networkSecurityGroup = getConstant(Constants.azure_networkSecurityGroup, "", false);
             boolean validationAuthority = Boolean.parseBoolean(getConstant(Constants.validationAuthorityValue, "false", true));
 
             Authentication auth = new Authentication();
