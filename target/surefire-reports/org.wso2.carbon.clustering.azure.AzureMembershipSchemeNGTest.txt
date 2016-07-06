@@ -1,0 +1,28 @@
+-------------------------------------------------------------------------------
+Test set: org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 8, Errors: 0, Skipped: 0, Time elapsed: 2.532 sec <<< FAILURE!
+testFindVMIPaddresses(org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest)  Time elapsed: 0.031 sec  <<< FAILURE!
+java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest.testFindVMIPaddresses(AzureMembershipSchemeNGTest.java:109)
+testGetAPIresponse(org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest)  Time elapsed: 0 sec  <<< FAILURE!
+java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest.testGetAPIresponse(AzureMembershipSchemeNGTest.java:125)
+testGetConstant(org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest)  Time elapsed: 0 sec  <<< FAILURE!
+java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest.testGetConstant(AzureMembershipSchemeNGTest.java:154)
+testInit(org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest)  Time elapsed: 0 sec  <<< FAILURE!
+java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest.testInit(AzureMembershipSchemeNGTest.java:91)
+testJoinGroup(org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest)  Time elapsed: 0 sec  <<< FAILURE!
+java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest.testJoinGroup(AzureMembershipSchemeNGTest.java:138)
+testSetCarbonCluster(org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest)  Time elapsed: 0 sec  <<< FAILURE!
+java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest.testSetCarbonCluster(AzureMembershipSchemeNGTest.java:79)
+testSetLocalMember(org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest)  Time elapsed: 0 sec  <<< FAILURE!
+java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest.testSetLocalMember(AzureMembershipSchemeNGTest.java:66)
+testSetPrimaryHazelcastInstance(org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest)  Time elapsed: 0.016 sec  <<< FAILURE!
+java.lang.NullPointerException
+	at org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest.testSetPrimaryHazelcastInstance(AzureMembershipSchemeNGTest.java:53)

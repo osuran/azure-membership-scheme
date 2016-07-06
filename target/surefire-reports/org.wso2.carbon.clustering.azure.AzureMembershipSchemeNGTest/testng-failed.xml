@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite verbose="0" name="Failed suite [org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest]">
+  <test name="Command line test(failed)" preserve-order="true">
+    <classes>
+      <class name="org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest">
+        <methods>
+          <include name="testGetAPIresponse"/>
+          <include name="setUpMethod"/>
+          <include name="testFindVMIPaddresses"/>
+          <include name="testInit"/>
+          <include name="tearDownClass"/>
+          <include name="testSetLocalMember"/>
+          <include name="testSetCarbonCluster"/>
+          <include name="testJoinGroup"/>
+          <include name="tearDownMethod"/>
+          <include name="testSetPrimaryHazelcastInstance"/>
+          <include name="setUpClass"/>
+          <include name="testGetConstant"/>
+        </methods>
+      </class> <!-- org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest -->
+    </classes>
+  </test> <!-- Command line test(failed) -->
+</suite> <!-- Failed suite [org.wso2.carbon.clustering.azure.AzureMembershipSchemeNGTest] -->
