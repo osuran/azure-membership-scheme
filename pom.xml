@@ -3,36 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.wso2.carbon.azure.artifacts</groupId>
-  <artifactId>wso2-azure-artifacts</artifactId>
+  <artifactId>azure-membership-scheme</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>membershipScheme</name>
+  <name>WSO2 Azure Membership Scheme</name>
   <url>http://maven.apache.org</url>
-    <profiles>
-        <profile>
-            <id>netbeans-private-testng</id>
-            <activation>
-                <property>
-                    <name>netbeans.testng.action</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.11</version>
-                        <configuration>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>target/nb-private/testng-suite.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+
     <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
