@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.axis2.clustering.ClusteringFault;
 import org.apache.axis2.clustering.ClusteringMessage;
 import org.apache.axis2.description.Parameter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -48,7 +49,7 @@ import org.wso2.carbon.clustering.azure.exceptions.AzureMembershipSchemeExceptio
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastCarbonClusterImpl;
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastMembershipScheme;
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastUtil;
-import org.wso2.carbon.utils.xml.StringUtils;
+//import org.wso2.carbon.utils.xml.StringUtils;
 
 /**
  *
