@@ -73,8 +73,8 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
   <parameter name="tenantId">7a94c74f-5ab1-46c2-a98c-df7df7c5f41w</parameter>
   <parameter name="clientId">ce86678c-8520-431c-9c9f-0bdf733e4131</parameter>
   <parameter name="subscriptionId">0820043e-501c-43ff-ab1d-a96258a301dw</parameter>
-  <parameter name="resourceGroup">ASCluster</parameter>
-  <parameter name="NSG">ASNSG</parameter>
+  <parameter name="resourceGroup">wso2ASResourceGroup</parameter>
+  <parameter name="networkSecurityGroup">NetworkSecurityGroup1</parameter>
   <parameter name="ARM_ENDPOINT">https://management.azure.com/</parameter>
   <parameter name="AURORIZATION_ENDPOINT">https://login.microsoftonline.com/</parameter>
   
