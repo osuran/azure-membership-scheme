@@ -44,12 +44,19 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  
   ```xml
   <clustering class="org.wso2.carbon.core.clustering.hazelcast.HazelcastClusteringAgent" enable="true">
+  
   <parameter name="membershipSchemeClassName">com.osura.membershipscheme.azure.AzureMembershipScheme</parameter>
   <parameter name="membershipScheme">Azure</parameter>
- 
   <parameter name="ARM_ENDPOINT">https://management.azure.com/</parameter>
   <parameter name="AURORIZATION_ENDPOINT">https://login.microsoftonline.com/</parameter>
   
+  <parameter name="subscriptionId">your Azure subscription ID</parameter>
+  <parameter name="tenantId">your actve directory tenant ID</parameter>
+  <parameter name="clientId">your service principal client ID</parameter>
+  <parameter name="credential"> client secret of the client ID</parameter>
+  <parameter name="resourceGroup">resource group in which your cluster is deployed</parameter>
+  <parameter name="networkSecurityGroup">network security group to which members are added</parameter>
+
   </clustering> 
   ```
   
@@ -60,24 +67,25 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  3. clientId - Client ID of the application
  4. credential - Client key
  5. resourceGroup - Name of the resource group where the cluster is deployed
- 6. NSG - Netwrok security group where relavent VMs are added to.
+ 6. networkSecurityGroup - Network security group where relavent VMs are added to.
 
   #### Example axis2.xml
 
 ```xml
 <clustering class="org.wso2.carbon.core.clustering.hazelcast.HazelcastClusteringAgent" enable="true">
+
   <parameter name="membershipSchemeClassName">com.osura.membershipscheme.azure.AzureMembershipScheme</parameter>
   <parameter name="membershipScheme">Azure</parameter>
- 
-  <parameter name="credential">uduq558Ble9TlucvGECEFDvRqGv6q0WsFvFWYWOTaRw=</parameter>
-  <parameter name="tenantId">7a94c74f-5ab1-46c2-a98c-df7df7c5f41w</parameter>
-  <parameter name="clientId">ce86678c-8520-431c-9c9f-0bdf733e4131</parameter>
-  <parameter name="subscriptionId">0820043e-501c-43ff-ab1d-a96258a301dw</parameter>
-  <parameter name="resourceGroup">ASCluster</parameter>
-  <parameter name="NSG">ASNSG</parameter>
   <parameter name="ARM_ENDPOINT">https://management.azure.com/</parameter>
   <parameter name="AURORIZATION_ENDPOINT">https://login.microsoftonline.com/</parameter>
-  
+
+  <parameter name="subscriptionId">0820043e-501c-43ff-ab1d-a96258a301dw</parameter>
+  <parameter name="tenantId">7a94c74f-5ab1-46c2-a98c-df7df7c5f41w</parameter>
+  <parameter name="clientId">ce86678c-8520-431c-9c9f-0bdf733e4131</parameter>
+  <parameter name="credential">uduq558Ble9TlucvGECEFDvRqGv6q0WsFvFWYWOTaRw=</parameter>
+  <parameter name="resourceGroup">wso2ASResourceGroup</parameter>
+  <parameter name="networkSecurityGroup">NetworkSecurityGroup1</parameter>
+ 
 </clustering>
 ```
 
