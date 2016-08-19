@@ -33,6 +33,6 @@ public class Constants {
     public final static String azure_clientId = "clientId";
     public final static String azure_subscriptionId = "subscriptionId";
     public final static String azure_resourceGroup = "resourceGroup";
-    public final static String azure_networkSecurityGroup = "NSG";
+    public final static String azure_networkSecurityGroup = "networkSecurityGroup";
     public final static String validationAuthorityValue = "validationAuthority"; 
 }
