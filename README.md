@@ -60,7 +60,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  3. clientId - Client ID of the application
  4. credential - Client key
  5. resourceGroup - Name of the resource group where the cluster is deployed
- 6. NSG - Network security group where relavent VMs are added to.
+ 6. networkSecurityGroup - Network security group where relavent VMs are added to.
 
   #### Example axis2.xml
 
