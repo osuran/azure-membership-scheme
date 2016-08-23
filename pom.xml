@@ -8,11 +8,24 @@
     <packaging>jar</packaging>
 
     <name>WSO2 Azure Membership Scheme</name>
-    <url>http://maven.apache.org</url>
+    <url>http://wso2.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    
+    <repositories>
+        <repository>
+            <id>wso2.releases</id>
+            <name>WSO2 internal Repository</name>
+            <url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
