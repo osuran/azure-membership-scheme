@@ -4,7 +4,7 @@ Azure membership scheme provides features for automatically discovering WSO2 Car
 
 ##How It Works
 
-Once a Carbon server starts it will query Virtual Machine IP addresses in the given cluster via Azure API. Before the cluster starts, it should be ensured that all of the virtual machines in the cluster are added to a particular network security group. Thereafter Hazelcast network configuration will be updated with the above IP addresses. As a result the Hazelcast instance will get connected all the other members in the cluster. In addition once a new member is added to the cluster, all the other members will get connected to the new member.
+Once a Carbon server starts it will query Virtual Machine IP addresses in the given cluster via Azure API. Before the cluster starts, it should be ensured that either all of the virtual machines in the cluster are added to a particular network security group or the  network interfaces of the virtual machines in the cluster are tagged with the same name. Thereafter Hazelcast network configuration will be updated with the above IP addresses. As a result the Hazelcast instance will get connected all the other members in the cluster. In addition once a new member is added to the cluster, all the other members will get connected to the new member.
 
 ##Installation
 
@@ -30,7 +30,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  commons-lang3-3.3.1.jar  
  httpcore-4.4.1.jar    
  json-smart-2.2.1.jar      
- membershipScheme-1.0-SNAPSHOT.jar    
+ azure-membership-scheme-1.0-SNAPSHOT    
  slf4j-api-1.7.5.jar
  asm-5.0.3.jar            
  commons-logging-1.2.jar  
@@ -56,6 +56,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
   <parameter name="credential"> client secret of the client ID</parameter>
   <parameter name="resourceGroup">resource group in which your cluster is deployed</parameter>
   <parameter name="networkSecurityGroup">network security group to which members are added</parameter>
+  <parameter name="networkInterfaceTag">tag name of the tag added to network interfaces of the VMs in the cluster</parameter>
 
   </clustering> 
   ```
@@ -68,6 +69,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
  4. credential - Client key
  5. resourceGroup - Name of the resource group where the cluster is deployed
  6. networkSecurityGroup - Network security group where relavent VMs are added to.
+ 7. networkInterfaceTag - tag name of the network interfaces of the VMs in the cluster
 
   #### Example axis2.xml
 
@@ -85,6 +87,7 @@ Once a Carbon server starts it will query Virtual Machine IP addresses in the gi
   <parameter name="credential">uduq558Ble9TlucvGECEFDvRqGv6q0WsFvFWYWOTaRw=</parameter>
   <parameter name="resourceGroup">wso2ASResourceGroup</parameter>
   <parameter name="networkSecurityGroup">NetworkSecurityGroup1</parameter>
+  <parameter name="networkInterfaceTag">WSO2ESB</parameter>
  
 </clustering>
 ```
