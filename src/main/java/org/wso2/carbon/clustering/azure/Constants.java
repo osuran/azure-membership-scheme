@@ -27,6 +27,7 @@ public class Constants {
             + "/%s?api-version=2016-03-30";
     public final static String REST_API_NIC_INFO = "%ssubscriptions/%s/resourceGroups/%s/providers/Microsoft.Network/networkInterfaces"
             + "/%s?api-version=2016-03-30";
+    public final static String REST_API_TAG = "%ssubscriptions/%s/resources?$filter=tagname+eq+'%s'&api-version=2015-01-01";
     public final static String azure_username = "azure_username";
     public final static String azure_credential = "credential";
     public final static String azure_tenantId = "tenantId";
@@ -34,5 +35,6 @@ public class Constants {
     public final static String azure_subscriptionId = "subscriptionId";
     public final static String azure_resourceGroup = "resourceGroup";
     public final static String azure_networkSecurityGroup = "networkSecurityGroup";
+    public final static String azure_network_interface_tag = "networkInterfaceTag";
     public final static String validationAuthorityValue = "validationAuthority"; 
 }

@@ -25,8 +25,10 @@ import com.hazelcast.core.MemberAttributeEvent;
 import com.hazelcast.core.MembershipEvent;
 import com.hazelcast.core.MembershipListener;
 import com.microsoft.aad.adal4j.AuthenticationResult;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +51,8 @@ import org.wso2.carbon.clustering.azure.exceptions.AzureMembershipSchemeExceptio
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastCarbonClusterImpl;
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastMembershipScheme;
 import org.wso2.carbon.core.clustering.hazelcast.HazelcastUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 //import org.wso2.carbon.utils.xml.StringUtils;
 
 /**
@@ -105,17 +109,24 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
             String clientId = getConstant(Constants.azure_clientId, "", false);
             String subscriptionId = getConstant(Constants.azure_subscriptionId, "", false);
             String resourceGroup = getConstant(Constants.azure_resourceGroup, "", false);
-            String networkSecurityGroup = getConstant(Constants.azure_networkSecurityGroup, "", false);
+            String networkSecurityGroup = getConstant(Constants.azure_networkSecurityGroup, "default", false);
+            String networkInterfaceTag = getConstant(Constants.azure_network_interface_tag, "default", false);
             boolean validationAuthority = Boolean.parseBoolean(getConstant(Constants.validationAuthorityValue, "false", true));
+
+            if (networkInterfaceTag==null && networkSecurityGroup==null) {
+                throw new ClusteringFault(String.format("both %s and %s parameters are empty. define at least one of them",
+                        Constants.azure_networkSecurityGroup, Constants.azure_network_interface_tag));
+            }
 
             Authentication auth = new Authentication();
             AuthenticationResult authToken = auth.getAuthToken(Constants.AUTHORIZATION_ENDPOINT, Constants.ARM_ENDPOINT,
-                    username, credential, tenantId, clientId, validationAuthority);
+                    null, credential, tenantId, clientId, validationAuthority);
 
             log.info(String.format("Azure clustering configuration: [autherization-endpont] %s , [arm-endpont] %s , [tenant-id] %s , [client-id] %s",
                     Constants.AUTHORIZATION_ENDPOINT, Constants.ARM_ENDPOINT, tenantId, clientId));
 
-            List IPAddresses = new ArrayList(findVMIPaddresses(authToken, Constants.ARM_ENDPOINT, subscriptionId, resourceGroup, networkSecurityGroup));
+            List IPAddresses = new ArrayList(findVMIPaddresses(authToken, Constants.ARM_ENDPOINT, subscriptionId, resourceGroup,
+                    networkSecurityGroup, networkInterfaceTag));
             for (Object IPAddress : IPAddresses) {
                 nwConfig.getJoin().getTcpIpConfig().addMember(IPAddress.toString());
                 log.info(String.format("Member added to cluster configuration: [IP Address] %s", IPAddress.toString()));
@@ -128,25 +139,55 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
 
     protected List<String> findVMIPaddresses(AuthenticationResult result,
             String ARM_ENDPOINT, String subscriptionID, String resourceGroup,
-            String networkSecurityGroup) throws AzureMembershipSchemeException {
+            String networkSecurityGroup, String networkInterfaceTag) throws AzureMembershipSchemeException {
 
         List IPAddresses = new ArrayList();
-        //list NICs grouped in the specified network security group
-        String url = String.format(Constants.REST_API_AVAILABLE_NICs, ARM_ENDPOINT, subscriptionID, resourceGroup, networkSecurityGroup);
-        InputStream instream = getAPIresponse(url, result);
+        String url = null;
+        InputStream instream = null;
         ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            NetworkSecurityGroup nsg = objectMapper.readValue(instream, NetworkSecurityGroup.class);
-            List ninames = nsg.getProperties().getNetworkInterfaceNames();
 
-            for (Object niname : ninames) {
-                url = String.format(Constants.REST_API_NIC_INFO, ARM_ENDPOINT, subscriptionID, resourceGroup, niname);
-                instream = getAPIresponse(url, result);
-                NetworkInterface ni = objectMapper.readValue(instream, NetworkInterface.class);
-                IPAddresses.add(ni.getProperties().getIPAddress());
+        if (networkInterfaceTag==null) {
+            //list NICs grouped in the specified network security group
+            url = String.format(Constants.REST_API_AVAILABLE_NICs, ARM_ENDPOINT, subscriptionID, resourceGroup, networkSecurityGroup);
+            instream = getAPIresponse(url, result);
+
+            try {
+                NetworkSecurityGroup nsg = objectMapper.readValue(instream, NetworkSecurityGroup.class);
+                List ninames = nsg.getProperties().getNetworkInterfaceNames();
+
+                for (Object niname : ninames) {
+                    url = String.format(Constants.REST_API_NIC_INFO, ARM_ENDPOINT, subscriptionID, resourceGroup, niname);
+                    instream = getAPIresponse(url, result);
+                    NetworkInterface ni = objectMapper.readValue(instream, NetworkInterface.class);
+                    IPAddresses.add(ni.getProperties().getIPAddress());
+                }
+            } catch (IOException ex) {
+                throw new AzureMembershipSchemeException("Could not find VM IP addresses", ex);
             }
-        } catch (IOException ex) {
-            throw new AzureMembershipSchemeException("Could not find VM IP addresses", ex);
+        } else if (networkSecurityGroup==null) { //List NICs according to the tags
+            try {
+                url = String.format(Constants.REST_API_TAG, ARM_ENDPOINT, subscriptionID, networkInterfaceTag);
+                //String body= inputStreamToString(getAPIresponse(url, result));
+                JSONObject root1 = new JSONObject(inputStreamToString(getAPIresponse(url, result)));
+                JSONArray values = root1.getJSONArray("value");
+                List ninames = new ArrayList();
+                for (int i = 0; i < values.length(); i++) {
+                    JSONObject firstelement = values.getJSONObject(i);
+                    Object name = firstelement.get("name");
+                    ninames.add(name);
+                }
+                for (Object niname : ninames) {
+                    url = String.format(Constants.REST_API_NIC_INFO, ARM_ENDPOINT, subscriptionID, resourceGroup, niname);
+                    instream = getAPIresponse(url, result);
+                    NetworkInterface ni = objectMapper.readValue(instream, NetworkInterface.class);
+                    IPAddresses.add(ni.getProperties().getIPAddress());
+                }
+            } catch (IOException ex) {
+                throw new AzureMembershipSchemeException("Could not find VM IP addresses", ex);
+            }
+        } else {
+            throw new AzureMembershipSchemeException("EITHER networkSecurityGroup OR networkInterfaceTag "
+                    + "must be chosen as the grouping method; not both of them");
         }
         return IPAddresses;
     }
@@ -197,12 +238,24 @@ public class AzureMembershipScheme implements HazelcastMembershipScheme {
         return param;
     }
 
+    public String inputStreamToString(InputStream instream) throws IOException {
+        String body = null;
+        StringBuilder sb = new StringBuilder();
+        BufferedReader r = new BufferedReader(new InputStreamReader(instream), 1000);
+        for (String line = r.readLine(); line != null; line = r.readLine()) {
+            sb.append(line);
+        }
+        instream.close();
+        body = sb.toString();
+
+        return body;
+    }
+
     private class AzureMembershipSchemeListener implements MembershipListener {
 
         @Override
         public void memberAdded(MembershipEvent membershipEvent) {
             Member member = membershipEvent.getMember();
-
             // Send all cluster messages
             carbonCluster.memberAdded(member);
             log.info(String.format("Member joined [%s] : %s", member.getUuid(), member.getSocketAddress().toString()));
